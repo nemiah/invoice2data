@@ -7,17 +7,18 @@ import os
 from os.path import join
 import logging
 
-from .input import pdftotext
-from .input import pdfminer_wrapper
-from .input import tesseract
-from .input import tesseract4
-from .input import gvision
+from input import pdftotext
+from input import pdfminer_wrapper
+from input import tesseract
+from input import tesseract4
+from input import gvision
 
-from invoice2data.extract.loader import read_templates
+from extract.loader import read_templates
 
-from .output import to_csv
-from .output import to_json
-from .output import to_xml
+from output import to_csv
+from output import to_json
+from output import to_xml
+from output import to_xml
 
 
 logger = logging.getLogger(__name__)
@@ -32,8 +33,10 @@ input_mapping = {
 
 output_mapping = {"csv": to_csv, "json": to_json, "xml": to_xml, "none": None}
 
+input_lang = {"deu": "deu", "eng": "eng"}
 
-def extract_data(invoicefile, templates=None, input_module=pdftotext):
+
+def extract_data(invoicefile, templates=None, input_module=pdftotext, input_module_lang="deu"):
     """Extracts structured data from PDF/image invoices.
 
     This function uses the text extracted from a PDF file or image and
@@ -79,16 +82,17 @@ def extract_data(invoicefile, templates=None, input_module=pdftotext):
         templates = read_templates()
 
     # print(templates[0])
-    extracted_str = input_module.to_text(invoicefile).decode("utf-8")
-
+    extracted_str = input_module.to_text(invoicefile, input_module_lang).decode("utf-8")
+    
     logger.debug("START pdftotext result ===========================")
     logger.debug(extracted_str)
     logger.debug("END pdftotext result =============================")
 
     logger.debug("Testing {} template files".format(len(templates)))
+    
     for t in templates:
         optimized_str = t.prepare_input(extracted_str)
-
+       
         if t.matches_input(optimized_str):
             return t.extract(optimized_str)
 
@@ -108,6 +112,13 @@ def create_parser():
         choices=input_mapping.keys(),
         default="pdftotext",
         help="Choose text extraction function. Default: pdftotext",
+    )
+
+    parser.add_argument(
+        "--input-reader-lang",
+        choices=input_lang.keys(),
+        default="deu",
+        help="Choose text extraction language. Default: deu",
     )
 
     parser.add_argument(
@@ -195,6 +206,11 @@ def main(args=None):
         logging.basicConfig(level=logging.INFO)
 
     input_module = input_mapping[args.input_reader]
+
+    input_module_lang = "deu"
+    if args.input_reader_lang:
+        input_module_lang = args.input_reader_lang
+    
     output_module = output_mapping[args.output_format]
 
     templates = []
@@ -207,7 +223,7 @@ def main(args=None):
         templates += read_templates()
     output = []
     for f in args.input_files:
-        res = extract_data(f.name, templates=templates, input_module=input_module)
+        res = extract_data(f.name, templates=templates, input_module=input_module, input_module_lang=input_module_lang)
         if res:
             logger.info(res)
             output.append(res)

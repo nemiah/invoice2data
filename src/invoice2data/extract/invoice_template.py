@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This module abstracts templates for invoice providers.
 
@@ -73,6 +74,13 @@ class InvoiceTemplate(OrderedDict):
         for method in self.options["preprocess"]:
             if method == "numbersDotToComma":
                 extracted_str = re.sub(r"(\s)([0-9]+)\.([0-9]{2})(\s)", r"\1\2,\3\4", extracted_str)
+            if method == "lettersUmlautToNon":
+                extracted_str = extracted_str.replace(u"ä", "a")
+                extracted_str = extracted_str.replace(u"ü", "u")
+                extracted_str = extracted_str.replace(u"ö", "o")
+                extracted_str = extracted_str.replace(u"Ä", "A")
+                extracted_str = extracted_str.replace(u"Ü", "U")
+                extracted_str = extracted_str.replace(u"Ö", "O")
 
         # Remove withspace
         if self.options["remove_whitespace"]:
