@@ -36,7 +36,7 @@ output_mapping = {"csv": to_csv, "json": to_json, "xml": to_xml, "none": None}
 input_lang = {"deu": "deu", "eng": "eng"}
 
 
-def extract_data(invoicefile, templates=None, input_module=pdftotext, input_module_lang="deu"):
+def extract_data(invoicefile, templates=None, input_module_lang="deu"):
     """Extracts structured data from PDF/image invoices.
 
     This function uses the text extracted from a PDF file or image and
@@ -81,12 +81,16 @@ def extract_data(invoicefile, templates=None, input_module=pdftotext, input_modu
     if templates is None:
         templates = read_templates()
 
-    # print(templates[0])
-    extracted_str = input_module.to_text(invoicefile, input_module_lang).decode("utf-8")
+    tesseracted = False
+    extracted_str = pdftotext.to_text(invoicefile, input_module_lang).decode("utf-8")
+    if extracted_str.strip() == "":
+        logger.debug("No extractable text, running OCR...")
+        extracted_str = tesseract.to_text(invoicefile, input_module_lang).decode("utf-8")
+        tesseracted = True
     
-    logger.debug("START pdftotext result ===========================")
+    logger.debug("START text result ===========================")
     logger.debug(extracted_str)
-    logger.debug("END pdftotext result =============================")
+    logger.debug("END text result =============================")
 
     logger.debug("Testing {} template files".format(len(templates)))
     
@@ -95,6 +99,27 @@ def extract_data(invoicefile, templates=None, input_module=pdftotext, input_modu
        
         if t.matches_input(optimized_str):
             return t.extract(optimized_str)
+
+    if tesseracted:
+        logger.error("No template for %s", invoicefile)
+        return False
+        
+
+    logger.debug("No template match! Re-reading...")
+    extracted_str = tesseract.to_text(invoicefile, input_module_lang).decode("utf-8")
+        
+    logger.debug("START tesseract result ===========================")
+    logger.debug(extracted_str)
+    logger.debug("END tesseract result =============================")
+
+    logger.debug("Testing {} template files".format(len(templates)))
+    
+    for t in templates:
+        optimized_str = t.prepare_input(extracted_str)
+       
+        if t.matches_input(optimized_str):
+            return t.extract(optimized_str)
+
 
     logger.error("No template for %s", invoicefile)
     return False
@@ -223,7 +248,7 @@ def main(args=None):
         templates += read_templates()
     output = []
     for f in args.input_files:
-        res = extract_data(f.name, templates=templates, input_module=input_module, input_module_lang=input_module_lang)
+        res = extract_data(f.name, templates=templates, input_module_lang=input_module_lang)
         if res:
             logger.info(res)
             output.append(res)

@@ -1,0 +1,16 @@
+issuer: BaDe GmbH & Co. KG
+fields:
+  amount: Gesamtbetrag(\d{1,10},\d{2})EUR
+  date: DATUM:(\d{2}.\d{2}.\d{4})
+  invoice_number: NUMMER:(\w{5,10})
+  IBAN: (DE\w{10,22})
+  BIC: 'HRB19197KI\)([A-Z0-9]{8,11})'
+  static_payment: transfer
+keywords:
+ - DE815734281
+ - Rechnung
+options:
+  remove_whitespace: true
+  date_formats:
+    - '%d.%m.%Y'
+  decimal_separator: ','

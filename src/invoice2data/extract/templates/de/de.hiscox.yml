@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+issuer: Hiscox Europe
+fields:
+  amount: Der Betrag in H.he von . ([\d]+,\d{2})
+  date: (\d{2}. \w+ \d{4})\s+BEITRA
+  invoice_number: Rechnungsnummer.:\s*([\w\/\.]+)\s
+  static_payment: directdebit
+keywords:
+  - Hiscox
+  - DE282517999
+  - BEITRAGSRECHNUNG
+options:
+  currency: EUR
+  date_formats:
+    - '%d.%B.%Y'
+  languages:
+    - de
+  decimal_separator: ','

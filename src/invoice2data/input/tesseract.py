@@ -24,7 +24,6 @@ def to_text(path, language):
     if not spawn.find_executable("convert"):
         raise EnvironmentError("imagemagick not installed.")
 	
-    # convert = "convert -density 350 %s -colorspace RGB -depth 8 -background '#FFFFFF' -flatten tiff:-" % (path)
     convert = [
         "convert",
         "-density",
@@ -45,7 +44,7 @@ def to_text(path, language):
         "grayscale",
         "-alpha",
         "off",
-        "test.png",
+        "png:-",
     ]
     
     p1 = subprocess.Popen(convert, stdout=subprocess.PIPE)

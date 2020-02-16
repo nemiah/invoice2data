@@ -1,0 +1,18 @@
+issuer: PVZ Pressevertriebszentrale GmbH & Co. KG
+fields:
+  amount: Zahlbetragbrutto(\d{1,10},\d{2})
+  date: (\d{2}.[A-Za-z]{3,12}\d{4})
+  invoice_number: Rechnung(\d{5,15})
+  IBAN: IBAN:(\w{10,22})
+  BIC: 'BIC:([A-Z0-9]{8,11})'
+  static_payment: transfer
+  reference: Verwendungszweck:(\w{9,12}/\w{4})
+keywords:
+ - PVZ
+ - Stockelsdorf
+ - Rechnung
+options:
+  remove_whitespace: true
+  date_formats:
+    - '%d.%B%Y'
+  decimal_separator: ','

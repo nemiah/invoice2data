@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-def to_text(path):
+def to_text(path, language):
     """Wrapper around Poppler pdftotext.
 
     Parameters
