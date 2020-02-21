@@ -1,0 +1,20 @@
+issuer: Example values
+fields:
+  amount: zuzahlen(\d{1,10},\d{2})
+  date: StandIhresBeitragskontoszum(\d{2}.\d{2}.\d{4})
+  invoice_number: \d{2}.\d{2}.\d{4}(\d{13})\d{4}\d{1,10},\d{2}
+  IBAN: IBAN:(\w{10,22})
+  BIC: '([A-Z]{6}[A-Z2-9][A-NP-Z0-9][A-Z0-9]{0,3})'
+  static_payment: transfer
+  reference: identnummer:(\w{5,10})
+keywords:
+ - IHK
+ - Schwaben
+options:
+  remove_whitespace: true
+  date_formats:
+    - '%d.%m.%Y'
+  decimal_separator: ','
+  preprocess:
+    - numbersDotToComma
+    - lettersUmlautToNon

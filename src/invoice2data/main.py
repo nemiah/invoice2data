@@ -209,6 +209,13 @@ def create_parser():
         action="store_true",
     )
 
+
+    parser.add_argument(
+        "--anonymize",
+        dest="anonymize",
+        help="Anonymize invoice and archive it"
+    )
+
     parser.add_argument(
         "input_files",
         type=argparse.FileType("r"),
@@ -258,14 +265,27 @@ def main(args=None):
                     invoice_number=res["invoice_number"],
                     desc=res["desc"],
                 )
-                shutil.copyfile(f.name, join(args.copy, filename))
+                
+                newName = join(args.copy, filename)
+                shutil.copyfile(f.name, newName)
+
+                if args.anonymize:
+                    from anonymize import anonymize
+                    anonymize(newName, args.anonymize)
+                    
             if args.move:
                 filename = args.filename.format(
                     date=res["date"].strftime("%Y-%m-%d"),
                     invoice_number=res["invoice_number"],
                     desc=res["desc"],
                 )
+                
+                newName = join(args.move, filename)
                 shutil.move(f.name, join(args.move, filename))
+
+                if args.anonymize:
+                    from anonymize import anonymize
+                    anonymize(newName, args.anonymize)
         f.close()
 
     if output_module is not None:
