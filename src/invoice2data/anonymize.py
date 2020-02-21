@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import cv2
+#import cv2
 from xml.dom import minidom
 import subprocess
 from distutils import spawn
@@ -23,32 +23,50 @@ def anonymize(path, dictionary):
     out, err = p0.communicate()
     #print(phrases)
 
-    if dictionary["zip"] and dictionary["city"]:
+    if "zip" in dictionary and "city" in dictionary and dictionary["zip"] and dictionary["city"]:
         phrase = dictionary["zip"]+" "+dictionary["city"]
         out = out.replace(phrase.encode('ISO-8859-1') , "-".ljust(len(phrase), "-"))
         
-    if dictionary["company"]:
+    if "company" in dictionary and dictionary["company"]:
+        phrase = "Firma "+dictionary["company"]
+        out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
+        
         phrase = dictionary["company"]
         out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
         
-    if dictionary["firstname"] and dictionary["lastname"]:
+    if "firstname" in dictionary and "lastname" in dictionary and dictionary["firstname"] and dictionary["lastname"]:
+        phrase = "Frau "+dictionary["firstname"]+" "+dictionary["lastname"]
+        out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
+        
+        phrase = "Herr "+dictionary["firstname"]+" "+dictionary["lastname"]
+        out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
+        
         phrase = dictionary["firstname"]+" "+dictionary["lastname"]
         out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
         
-    if dictionary["lastname"]:
+    if "lastname" in dictionary and dictionary["lastname"]:
         phrase = "Herr "+dictionary["lastname"]
         out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
         
         phrase = "Frau "+dictionary["lastname"]
         out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
         
-    if dictionary["street"] and dictionary["number"]:
+    if "street" in dictionary and "number" in dictionary and dictionary["street"] and dictionary["number"]:
         phrase = dictionary["street"]+" "+dictionary["number"]
         out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
         
         phrase = dictionary["street"].replace(u"straße", u"str.")+" "+dictionary["number"]
         out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
-    
+
+    if "additional" in dictionary and dictionary["additional"]:
+        if isinstance(dictionary["additional"], list):
+            for phrase in dictionary["additional"]:
+                out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
+        else:
+            phrase = dictionary["additional"]
+            out = out.replace(phrase.encode('ISO-8859-1'), "-".ljust(len(phrase), "-"))
+
+            
     """
     for phrase in phrases:
         out = out.replace(phrase, " ".ljust(len(phrase)));
