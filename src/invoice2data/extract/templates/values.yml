@@ -8,8 +8,8 @@ fields:
   static_payment: transfer
   reference: identnummer:(\w{5,10})
 keywords:
- - IHK
- - Schwaben
+ - Some
+ - Keywords
 options:
   remove_whitespace: true
   date_formats:

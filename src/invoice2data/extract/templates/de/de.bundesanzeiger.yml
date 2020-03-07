@@ -1,0 +1,18 @@
+issuer: Bundesanzeiger Verlag GmbH
+fields:
+  amount: innerhalbvon[\d]+Tagen(\d{1,10},\d{2})
+  date: (\d{2}.\d{2}.\d{4})Rechnung
+  invoice_number: Rechnungsdatum\s([\d]{8})
+  IBAN: IBAN(\w{10,22})
+  BIC: 'BIC-CODE([A-Z]{6}[A-Z2-9][A-NP-Z0-9][A-Z0-9]{0,3})'
+  static_payment: transfer
+  reference: identnummer:(\w{5,10})
+keywords:
+ - DE122787997
+ - Rechnung
+options:
+  remove_whitespace: true
+  date_formats:
+    - '%d.%m.%Y'
+  decimal_separator: ','
+

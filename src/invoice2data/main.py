@@ -262,8 +262,8 @@ def main(args=None):
             if args.copy:
                 filename = args.filename.format(
                     date=res["date"].strftime("%Y-%m-%d"),
-                    invoice_number=res["invoice_number"],
-                    desc=res["desc"],
+                    invoice_number=makeFilename(res["invoice_number"]),
+                    desc=makeFilename(res["desc"]),
                 )
                 
                 newName = join(args.copy, filename)
@@ -276,8 +276,8 @@ def main(args=None):
             if args.move:
                 filename = args.filename.format(
                     date=res["date"].strftime("%Y-%m-%d"),
-                    invoice_number=res["invoice_number"],
-                    desc=res["desc"],
+                    invoice_number=makeFilename(res["invoice_number"]),
+                    desc=makeFilename(res["desc"]),
                 )
                 
                 newName = join(args.move, filename)
@@ -291,6 +291,18 @@ def main(args=None):
     if output_module is not None:
         output_module.write_to_file(output, args.output_name, args.output_date_format)
 
+def makeFilename(value):
+    """
+    Normalizes string, converts to lowercase, removes non-alpha characters,
+    and converts spaces to hyphens.
+    """
+    import re
+    import unicodedata
+    #value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = re.sub('[^\w\s-]', '', value).strip().lower()
+    value = re.sub('[-\s]+', '-', value)
+
+    return value
 
 if __name__ == "__main__":
     main()
