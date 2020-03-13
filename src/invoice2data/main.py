@@ -83,10 +83,10 @@ def extract_data(invoicefile, templates=None, input_module_lang="deu"):
 
     tesseracted = False
     extracted_str = pdftotext.to_text(invoicefile, input_module_lang).decode("utf-8")
-    #if extracted_str.strip() == "":
-    #    logger.debug("No extractable text, running OCR...")
-    #    extracted_str = tesseract.to_text(invoicefile, input_module_lang).decode("utf-8")
-    #    tesseracted = True
+    if extracted_str.strip() == "":
+        logger.debug("No extractable text, running OCR...")
+        extracted_str = tesseract.to_text(invoicefile, input_module_lang).decode("utf-8")
+        tesseracted = True
     
     logger.debug("START text result ===========================")
     logger.debug(extracted_str)
@@ -100,25 +100,25 @@ def extract_data(invoicefile, templates=None, input_module_lang="deu"):
         if t.matches_input(optimized_str):
             return t.extract(optimized_str)
 
-    #if tesseracted:
-    #    logger.error("No template for %s", invoicefile)
-    #    return False
+    if tesseracted:
+        logger.error("No template for %s", invoicefile)
+        return False
         
 
-    #logger.debug("No template match! Re-reading...")
-    #extracted_str = tesseract.to_text(invoicefile, input_module_lang).decode("utf-8")
+    logger.debug("No template match! Re-reading...")
+    extracted_str = tesseract.to_text(invoicefile, input_module_lang).decode("utf-8")
         
-    #logger.debug("START tesseract result ===========================")
-    #logger.debug(extracted_str)
-    #logger.debug("END tesseract result =============================")
+    logger.debug("START tesseract result ===========================")
+    logger.debug(extracted_str)
+    logger.debug("END tesseract result =============================")
 
-    #logger.debug("Testing {} template files".format(len(templates)))
+    logger.debug("Testing {} template files".format(len(templates)))
     
-    #for t in templates:
-    #    optimized_str = t.prepare_input(extracted_str)
+    for t in templates:
+        optimized_str = t.prepare_input(extracted_str)
        
-    #    if t.matches_input(optimized_str):
-    #        return t.extract(optimized_str)
+        if t.matches_input(optimized_str):
+            return t.extract(optimized_str)
 
 
     logger.error("No template for %s", invoicefile)
